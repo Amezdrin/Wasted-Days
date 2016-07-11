@@ -1,9 +1,11 @@
 package artemtrue.wasteddays;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
@@ -14,6 +16,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+    }
+
+    public void wastedDaysCounter(){
+        int wastedDays = 0;
+        wastedDays++;
+    }
+
+    public void savedDaysCounter(){
+        int savedDays = 0;
+        savedDays++;
     }
 
     public void timeStamp(){
@@ -27,12 +39,26 @@ public class MainActivity extends AppCompatActivity {
 
     public void wastedButtonFollower(View view) {
 
-        View bg = findViewById(R.id.background);
+        LinearLayout rl = (LinearLayout) findViewById(R.id.background);
         Button wasted = (Button) findViewById(R.id.wasted_btn);
-        //wasted.setBackgroundColor(0xB0171F);
-        wasted.setEnabled(false);
+        Button saved = (Button) findViewById(R.id.saved_btn);
         timeStamp();
-        bg.setBackgroundColor(0xB0171F);
-        //wasted.setClickable(false);
+        rl.setBackgroundColor(Color.RED);
+        wasted.setEnabled(false);
+        wastedDaysCounter();
+        saved.setEnabled(false);
     }
+
+    public void savedButtonFollower(View view) {
+
+        LinearLayout rl2 = (LinearLayout) findViewById(R.id.background);
+        Button wasted = (Button) findViewById(R.id.wasted_btn);
+        Button saved = (Button) findViewById(R.id.saved_btn);
+        rl2.setBackgroundColor(Color.GREEN);
+        timeStamp();
+        saved.setEnabled(false);
+        savedDaysCounter();
+        wasted.setEnabled(false);
+    }
+
 }
