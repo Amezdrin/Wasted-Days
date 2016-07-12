@@ -20,18 +20,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
     }
 
-    //long date = System.currentTimeMillis();
-
-    //long countdown = 86400000 - date;
     CountDownTimer cTimer = null;
+    int wastedDays = 0;
+    int savedDays = 0;
 
     public void wastedDaysCounter(){
-        int wastedDays = 0;
         wastedDays++;
     }
 
     public void savedDaysCounter(){
-        int savedDays = 0;
         savedDays++;
     }
 
@@ -51,11 +48,7 @@ public class MainActivity extends AppCompatActivity {
         final Button wasted = (Button) findViewById(R.id.wasted_btn);
         final Button saved = (Button) findViewById(R.id.saved_btn);
 
-
-        /* rl.setBackgroundColor(Color.RED);
-        wasted.setEnabled(false);
-        wastedDaysCounter();
-        saved.setEnabled(false); */
+        timeStamp();
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, +1);
         long timeInFuture = cal.getTimeInMillis();
@@ -89,38 +82,37 @@ public class MainActivity extends AppCompatActivity {
         final Button saved = (Button) findViewById(R.id.saved_btn);
 
         timeStamp();
-        /* rl2.setBackgroundColor(Color.GREEN);
-        saved.setEnabled(false);
-        savedDaysCounter();
-        wasted.setEnabled(false); */
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, +1);
         long timeInFuture = cal.getTimeInMillis();
-         long currentTime = System.currentTimeMillis();
-         long countdown = timeInFuture - currentTime;
+        long currentTime = System.currentTimeMillis();
+        long countdown = timeInFuture - currentTime;
 
-        /**long date = System.currentTimeMillis();
-         long countdown = 86400000 - date;*/ //уходит в минус, нужно завтрашний день (00:00) в миллисекунды и из него вычесть текущий (calendar api).
-                https://cl.ly/1I0n2J2q1W32
-        http://stackoverflow.com/questions/15607500/subtracting-two-days-from-current-date-in-epoch-milliseconds-java
+        if(timeInFuture > currentTime) {
+            cTimer = new CountDownTimer(countdown, 1000) {
 
+                public void onTick(long millisUntilFinished) {
 
-        cTimer = new CountDownTimer(countdown, 1000) {
+                    rl2.setBackgroundColor(Color.GREEN);
+                    saved.setEnabled(false);
+                    savedDaysCounter();
+                    wasted.setEnabled(false);
+                }
 
-            public void onTick(long millisUntilFinished) {
-
-                rl2.setBackgroundColor(Color.RED);
-                saved.setEnabled(false);
-                savedDaysCounter();
-                wasted.setEnabled(false);
-            }
-
-            public void onFinish() {
-                rl2.setBackgroundColor(Color.TRANSPARENT);
-                saved.setEnabled(true);
-                wasted.setEnabled(true);
-                timeStamp.setText("It's a new day!");
-            }
-        }.start();
+                public void onFinish() {
+                    rl2.setBackgroundColor(Color.TRANSPARENT);
+                    saved.setEnabled(true);
+                    wasted.setEnabled(true);
+                    timeStamp.setText("It's a new day!");
+                }
+            }.start();
+        }
+        else{
+            rl2.setBackgroundColor(Color.TRANSPARENT);
+            saved.setEnabled(true);
+            wasted.setEnabled(true);
+            timeStamp.setText("It's a new day!");
+        }
     }
+
 }
