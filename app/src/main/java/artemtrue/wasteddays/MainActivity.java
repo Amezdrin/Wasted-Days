@@ -17,26 +17,22 @@ import java.util.Date;
 public class MainActivity extends AppCompatActivity {
 
     int wastedDays = 0;
-    //Calendar calendar = Calendar.getInstance();
+    int savedDays = 0;
+    Boolean dayIsSaved = false;
+    Boolean dayIsWasted = false;
     Calendar calendar2 = Calendar.getInstance();
-    //Calendar tomorrow = new GregorianCalendar();
     MyTask mt;
-    long todayInMillis;
-    long tomorrowInMillis;
     Date today;
     Date tomorrow;
     String out1;
     String out2;
     String out1i;
-    String out2i;
-    boolean ass = false;
     int i = 0;
     int i2 = 0;
     private static final String TAG = "Date today";
     private static final String TAG1 = "Date tomorrow";
     private static final String TAG2 = "current i value";
-    private static final String TAG3 = "current i2 value";
-    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,58 +40,71 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
     }
 
-    public void wastedDaysCounter(){
-        wastedDays = wastedDays + 1;
+    public void DaysCounter(){ //счётчик дней для wasted и saved
         TextView numberOfWastedDays = (TextView) findViewById(R.id.wasted_number);
-        numberOfWastedDays.setText(Integer.toString(wastedDays));
+        TextView numberOfSavedDays = (TextView) findViewById(R.id.saved_number);
+
+        if(dayIsWasted == true) {
+            wastedDays = wastedDays + 1;
+            numberOfWastedDays.setText(Integer.toString(wastedDays));
+        }
+
+        if(dayIsSaved == true) {
+            savedDays = savedDays + 1;
+            numberOfSavedDays.setText(Integer.toString(savedDays));
+        }
     }
 
-    public void makeUIWasted(){
+    public void commonUIChanger(){ //меняет UI на wasted или saved
         final LinearLayout rl = (LinearLayout) findViewById(R.id.background);
         final Button wasted = (Button) findViewById(R.id.wasted_btn);
+        final Button saved = (Button) findViewById(R.id.saved_btn);
 
-        rl.setBackgroundColor(Color.RED);
-        wasted.setEnabled(false);
+        if(dayIsWasted == true){
+            rl.setBackgroundColor(Color.RED);
+            wasted.setEnabled(false);
+            saved.setEnabled(false);
+        }
+
+        if(dayIsSaved == true){
+            rl.setBackgroundColor(Color.GREEN);
+            saved.setEnabled(false);
+            wasted.setEnabled(false);
+        }
     }
 
-    public void makeUIOrigin(){
+    public void makeUIOrigin(){ //меняет UI на исходный
+
         TextView timeStamp = (TextView) findViewById(R.id.currentDate_txtView);
         final LinearLayout rl = (LinearLayout) findViewById(R.id.background);
         final Button wasted = (Button) findViewById(R.id.wasted_btn);
-
+        final Button saved = (Button) findViewById(R.id.saved_btn);
+        dayIsSaved = false;
+        dayIsWasted = false;
         rl.setBackgroundColor(Color.TRANSPARENT);
         timeStamp.setText("It's a new day!");
         wasted.setEnabled(true);
+        saved.setEnabled(true);
+
     }
 
-    public void todayTimeStamp(){
+    public void todayTimeStamp(){ //ставит сегодняшнюю дату
+
         TextView timeStamp = (TextView) findViewById(R.id.currentDate_txtView);
         long date = System.currentTimeMillis();
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
         String dateString = sdf.format(date);
         timeStamp.setText(dateString);
     }
 
-    /**TODO посмотреть правильность дат в календаре, цикл работает но за 1 секунду, как-будто разница между завтра и сегодня всегда 0*/
-    public void getTodayDay(){
-        /*today.getInstance();
-        today.set(Calendar.DATE, 0);
-        today.set(Calendar.HOUR_OF_DAY, 0);
-        today.set(Calendar.MINUTE, 0);
-        today.set(Calendar.SECOND, 0);
-        today.set(Calendar.MILLISECOND, 0);
-        todayInMillis = today.getTimeInMillis();
-        tomorrow = today;
-        tomorrow.set(Calendar.DATE, 1);*/
+    public void getTodayDay(){  //получает сегодняшнюю дату и время из календаря
 
         Calendar calendar = Calendar.getInstance();
         today = calendar.getTime();
         Log.w(TAG,sdf.format(today));
-
     }
 
-    public void getTomorrowDay(){
-       // tomorrow.set(Calendar.DATE, 1);
+    public void getTomorrowDay(){ //получает завтрашнюю дату с временем 00:00:00
+
         calendar2.set(Calendar.HOUR_OF_DAY, 0);
         calendar2.set(Calendar.MINUTE, 0);
         calendar2.set(Calendar.SECOND, 0);
@@ -105,36 +114,29 @@ public class MainActivity extends AppCompatActivity {
         Log.w(TAG1,sdf.format(tomorrow));
     }
 
-    public int compareDates(){
+    public int compareDates(){ //сравнивает даты
 
-        //ass = today.equals(tomorrow);
         i = tomorrow.compareTo(today);
-        //i2 = today.compareTo(tomorrow);
-        //int i3 = today.compareTo(today);
         out1 = today.toString();
         out2 = tomorrow.toString();
         out1i = ("" + i);
-        //out2i = ("" + i2);
-        //String out3i = ("" + i3);
         Log.w(TAG,out1);
         Log.w(TAG1, out2);
         Log.w(TAG2, out1i);
-        //Log.w(TAG3, out2i);
-        //Log.w(TAG, out3i);
         return i;
     }
 
-    class MyTask extends AsyncTask<Void, Void, Void> {
+    class MyTask extends AsyncTask<Void, Void, Void> { //сравнение сегодняшней и завтрашней дат
 
         @Override
-        protected void onPreExecute() {
+        protected void onPreExecute() { //получение дат
             super.onPreExecute();
             getTodayDay();
             getTomorrowDay();
         }
 
         @Override
-        protected Void doInBackground(Void... params) {
+        protected Void doInBackground(Void... params) { //мониторинг наступления завтрашнего дня
             try {
                 compareDates();
                 while(i>0) {
@@ -148,20 +150,30 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(Void result) {
+        protected void onPostExecute(Void result) { //по наступлении дня UI возращается к исходному
             super.onPostExecute(result);
             getTodayDay();
             compareDates();
             makeUIOrigin();
-            //ass = true;
         }
     }
 
-    public void wastedButtonFollower(View view) {
+    public void wastedButtonClickListener(View view) { //обработка нажатия кнопки "потрачено"
 
-        wastedDaysCounter();
+        dayIsWasted = true;
+        DaysCounter();
         todayTimeStamp();
-        makeUIWasted();
+        commonUIChanger();
+        mt = new MyTask();
+        mt.execute();
+    }
+
+    public void savedButtonClickListener(View view) { //обработка нажатия кнопки "потрачено"
+
+        dayIsSaved = true;
+        DaysCounter();
+        todayTimeStamp();
+        commonUIChanger();
         mt = new MyTask();
         mt.execute();
     }
