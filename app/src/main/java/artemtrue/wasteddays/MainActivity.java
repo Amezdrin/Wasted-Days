@@ -1,6 +1,7 @@
 package artemtrue.wasteddays;
 
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -9,11 +10,16 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
 
     int wastedDays = 0;
-    int savedDays = 0;
+    Calendar today;
+    Calendar tomorrow;
+    MyTask mt;
+    long todayInMillis;
+    long tomorrowInMillis;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,14 +33,23 @@ public class MainActivity extends AppCompatActivity {
         numberOfWastedDays.setText(Integer.toString(wastedDays));
     }
 
-    public void savedDaysCounter(){
-        savedDays = savedDays + 1;
-        TextView numberOfSavedDays = (TextView) findViewById(R.id.saved_number);
-        numberOfSavedDays.setText(Integer.toString(savedDays));
+    public void makeUIWasted(){
+        final LinearLayout rl = (LinearLayout) findViewById(R.id.background);
+        final Button wasted = (Button) findViewById(R.id.wasted_btn);
+
+        rl.setBackgroundColor(Color.RED);
+        wasted.setEnabled(false);
     }
 
-    public void timeStamp(){
+    public void makeUIOrigin(){
+        final LinearLayout rl = (LinearLayout) findViewById(R.id.background);
+        final Button wasted = (Button) findViewById(R.id.wasted_btn);
 
+        rl.setBackgroundColor(Color.TRANSPARENT);
+        wasted.setEnabled(true);
+    }
+
+    public void todayTimeStamp(){
         TextView timeStamp = (TextView) findViewById(R.id.currentDate_txtView);
         long date = System.currentTimeMillis();
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
@@ -42,34 +57,57 @@ public class MainActivity extends AppCompatActivity {
         timeStamp.setText(dateString);
     }
 
-    public void wastedButtonFollower(View view) {
-
-        final TextView timeStamp = (TextView) findViewById(R.id.currentDate_txtView);
-        final LinearLayout rl = (LinearLayout) findViewById(R.id.background);
-        final Button wasted = (Button) findViewById(R.id.wasted_btn);
-        final Button saved = (Button) findViewById(R.id.saved_btn);
-
-        wastedDaysCounter();
-        timeStamp();
-
-        rl.setBackgroundColor(Color.RED);
-        wasted.setEnabled(false);
-        saved.setEnabled(false);
+    /**TODO посмотреть правильность дат в календаре, цикл работает но за 1 секунду, как-будто разница между завтра и сегодня всегда 0*/
+    public void getTodayDay(){
+        today.getInstance();
+        today.set(Calendar.DATE, 0);
+        today.set(Calendar.HOUR_OF_DAY, 0);
+        today.set(Calendar.MINUTE, 0);
+        today.set(Calendar.SECOND, 0);
+        today.set(Calendar.MILLISECOND, 0);
+        todayInMillis = today.getTimeInMillis();
+        tomorrow = today;
     }
 
-    public void savedButtonFollower(View view) {
+    public void getTomorrowDay(){
+        tomorrow.set(Calendar.DATE, 1);
+        tomorrowInMillis = tomorrow.getTimeInMillis();
+    }
 
-        final TextView timeStamp = (TextView) findViewById(R.id.currentDate_txtView);
-        final LinearLayout rl2 = (LinearLayout) findViewById(R.id.background);
-        final Button wasted = (Button) findViewById(R.id.wasted_btn);
-        final Button saved = (Button) findViewById(R.id.saved_btn);
+    class MyTask extends AsyncTask<Void, Void, Void> {
 
-        savedDaysCounter();
-        timeStamp();
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
 
-        rl2.setBackgroundColor(Color.GREEN);
-        saved.setEnabled(false);
-        wasted.setEnabled(false);
+        }
 
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                getTomorrowDay();
+                while(todayInMillis <= tomorrowInMillis) {
+                   getTodayDay();
+                }
+            } catch (Exception e) {
+
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            makeUIOrigin();
+        }
+    }
+
+    public void wastedButtonFollower(View view) {
+
+        wastedDaysCounter();
+        todayTimeStamp();
+        makeUIWasted();
+        mt = new MyTask();
+        mt.execute();
     }
 }
