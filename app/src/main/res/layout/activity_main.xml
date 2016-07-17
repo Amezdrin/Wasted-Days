@@ -60,7 +60,7 @@
         android:text="Wasted"
         android:id="@+id/wasted_btn"
         android:layout_alignParentBottom="true"
-        android:onClick="wastedButtonClickListener"
+        android:onClick="onClickListener"
         />
     </LinearLayout>
 
@@ -76,7 +76,7 @@
             android:text="Saved"
             android:id="@+id/saved_btn"
             android:layout_alignParentBottom="true"
-            android:onClick="savedButtonClickListener"
+            android:onClick="onClickListener"
             />
     </LinearLayout>
 

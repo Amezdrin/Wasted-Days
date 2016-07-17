@@ -1,5 +1,6 @@
 package artemtrue.wasteddays;
 
+import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -16,27 +17,27 @@ import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
-    int wastedDays = 0;
-    int savedDays = 0;
     Boolean dayIsSaved = false;
     Boolean dayIsWasted = false;
     Calendar calendar2 = Calendar.getInstance();
-    MyTask mt;
     Date today;
     Date tomorrow;
+    int wastedDays = 0;
+    int savedDays = 0;
+    int i = 0;
+    MyTask mt;
+    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
     String out1;
     String out2;
     String out1i;
-    int i = 0;
-    int i2 = 0;
-    private static final String TAG = "Date today";
-    private static final String TAG1 = "Date tomorrow";
-    private static final String TAG2 = "current i value";
-    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
+    String TAG = "Date today";
+    String TAG1 = "Date tomorrow";
+    String TAG2 = "current i value";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_main);
     }
 
@@ -158,23 +159,26 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void wastedButtonClickListener(View view) { //обработка нажатия кнопки "потрачено"
+    public void onClickListener(View view) {
 
-        dayIsWasted = true;
-        DaysCounter();
-        todayTimeStamp();
-        commonUIChanger();
-        mt = new MyTask();
-        mt.execute();
-    }
+        switch (view.getId()) {
+            case R.id.wasted_btn:
+                dayIsWasted = true;
+                DaysCounter();
+                todayTimeStamp();
+                commonUIChanger();
+                mt = new MyTask();
+                mt.execute();
+                break;
 
-    public void savedButtonClickListener(View view) { //обработка нажатия кнопки "потрачено"
-
-        dayIsSaved = true;
-        DaysCounter();
-        todayTimeStamp();
-        commonUIChanger();
-        mt = new MyTask();
-        mt.execute();
+            case R.id.saved_btn:
+                dayIsSaved = true;
+                DaysCounter();
+                todayTimeStamp();
+                commonUIChanger();
+                mt = new MyTask();
+                mt.execute();
+                break;
+        }
     }
 }
