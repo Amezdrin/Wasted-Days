@@ -1,5 +1,6 @@
 package artemtrue.wasteddays;
 
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -24,6 +25,8 @@ public class MainActivity extends AppCompatActivity {
     Date tomorrow;
     int wastedDays = 0;
     int savedDays = 0;
+    int restoreWastedDays = 0;
+    int restoreSavedDays = 0;
     int i = 0;
     MyTask mt;
     SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
@@ -33,12 +36,34 @@ public class MainActivity extends AppCompatActivity {
     String TAG = "Date today";
     String TAG1 = "Date tomorrow";
     String TAG2 = "current i value";
+    public static final String WD = "WastedDAYS";
+    public static final String SD = "SavedDAYS";
+    SharedPreferences forSavedDays;
+    SharedPreferences forWastedDays;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_main);
+
+        /*if (SD != null && WD != null )
+        {
+            wastedDays = forWastedDays.getInt(WD, wastedDays);
+            savedDays = forSavedDays.getInt(SD, savedDays);
+        }*/
+        SharedPreferences prefs = getSharedPreferences("sharedPref", MODE_PRIVATE);
+        int restoredWDValue = prefs.getInt(WD, restoreWastedDays);
+        int restoredSDValue = prefs.getInt(SD, restoreSavedDays);
+        if (restoredWDValue != 0 && restoredSDValue != 0) {
+            wastedDays = prefs.getInt(WD, restoreWastedDays);
+            savedDays = prefs.getInt(SD, restoreSavedDays);
+        }
+        else{
+            wastedDays = 0;
+            savedDays = 0;
+        }
+
     }
 
     public void DaysCounter(){ //счётчик дней для wasted и saved
@@ -47,11 +72,13 @@ public class MainActivity extends AppCompatActivity {
 
         if(dayIsWasted == true) {
             wastedDays = wastedDays + 1;
+            restoreWastedDays = wastedDays;
             numberOfWastedDays.setText(Integer.toString(wastedDays));
         }
 
         if(dayIsSaved == true) {
             savedDays = savedDays + 1;
+            restoreSavedDays = savedDays;
             numberOfSavedDays.setText(Integer.toString(savedDays));
         }
     }
@@ -159,6 +186,31 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**TODO определить, насколько нужны методы ниже этой строки*/
+    public void saveWastedDays() {
+
+        /*forWastedDays = getApplicationContext().getSharedPreferences(WD, MODE_PRIVATE);
+        SharedPreferences.Editor editor = forWastedDays.edit();
+        editor.putInt(WD, wastedDays);
+        editor.commit(); */
+
+        SharedPreferences.Editor editor = getSharedPreferences("sharedPref", MODE_PRIVATE).edit();
+        editor.putInt(WD, restoreWastedDays);
+        editor.commit();
+    }
+
+    public void saveSaveDays() {
+
+        /*forSavedDays = getApplicationContext().getSharedPreferences(SD, MODE_PRIVATE);
+        SharedPreferences.Editor editor = forSavedDays.edit();
+        editor.putInt(SD, savedDays);
+        editor.commit(); */
+
+        SharedPreferences.Editor editor = getSharedPreferences("sharedPref", MODE_PRIVATE).edit();
+        editor.putInt(SD, restoreSavedDays);
+        editor.commit();
+    }
+
     public void onClickListener(View view) {
 
         switch (view.getId()) {
@@ -169,6 +221,7 @@ public class MainActivity extends AppCompatActivity {
                 commonUIChanger();
                 mt = new MyTask();
                 mt.execute();
+                saveWastedDays();
                 break;
 
             case R.id.saved_btn:
@@ -178,7 +231,9 @@ public class MainActivity extends AppCompatActivity {
                 commonUIChanger();
                 mt = new MyTask();
                 mt.execute();
+                saveSaveDays();
                 break;
         }
     }
+
 }
