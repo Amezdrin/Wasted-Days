@@ -38,8 +38,6 @@ public class MainActivity extends AppCompatActivity {
     String TAG2 = "current i value";
     public static final String WD = "WastedDAYS";
     public static final String SD = "SavedDAYS";
-    SharedPreferences forSavedDays;
-    SharedPreferences forWastedDays;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,11 +45,10 @@ public class MainActivity extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_main);
 
-        /*if (SD != null && WD != null )
-        {
-            wastedDays = forWastedDays.getInt(WD, wastedDays);
-            savedDays = forSavedDays.getInt(SD, savedDays);
-        }*/
+        /**выводит количество дней при запуске приложения*/
+        TextView numberOfWastedDays = (TextView) findViewById(R.id.wasted_number);
+        TextView numberOfSavedDays = (TextView) findViewById(R.id.saved_number);
+
         SharedPreferences prefs = getSharedPreferences("sharedPref", MODE_PRIVATE);
         int restoredWDValue = prefs.getInt(WD, restoreWastedDays);
         int restoredSDValue = prefs.getInt(SD, restoreSavedDays);
@@ -60,10 +57,11 @@ public class MainActivity extends AppCompatActivity {
             savedDays = prefs.getInt(SD, restoreSavedDays);
         }
         else{
-            wastedDays = 0;
-            savedDays = 0;
+            wastedDays = prefs.getInt(WD, 0);
+            savedDays = prefs.getInt(SD, 0);
         }
-
+        numberOfWastedDays.setText(Integer.toString(wastedDays));
+        numberOfSavedDays.setText(Integer.toString(savedDays));
     }
 
     public void DaysCounter(){ //счётчик дней для wasted и saved
@@ -101,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void makeUIOrigin(){ //меняет UI на исходный
+    public void resetUIToDefault(){ //меняет UI на исходный
 
         TextView timeStamp = (TextView) findViewById(R.id.currentDate_txtView);
         final LinearLayout rl = (LinearLayout) findViewById(R.id.background);
@@ -182,17 +180,13 @@ public class MainActivity extends AppCompatActivity {
             super.onPostExecute(result);
             getTodayDay();
             compareDates();
-            makeUIOrigin();
+            resetUIToDefault();
         }
     }
 
-    /**TODO определить, насколько нужны методы ниже этой строки*/
+    /** TODO - handler for back button; - button to reset values; - statistic */
+    
     public void saveWastedDays() {
-
-        /*forWastedDays = getApplicationContext().getSharedPreferences(WD, MODE_PRIVATE);
-        SharedPreferences.Editor editor = forWastedDays.edit();
-        editor.putInt(WD, wastedDays);
-        editor.commit(); */
 
         SharedPreferences.Editor editor = getSharedPreferences("sharedPref", MODE_PRIVATE).edit();
         editor.putInt(WD, restoreWastedDays);
@@ -200,11 +194,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void saveSaveDays() {
-
-        /*forSavedDays = getApplicationContext().getSharedPreferences(SD, MODE_PRIVATE);
-        SharedPreferences.Editor editor = forSavedDays.edit();
-        editor.putInt(SD, savedDays);
-        editor.commit(); */
 
         SharedPreferences.Editor editor = getSharedPreferences("sharedPref", MODE_PRIVATE).edit();
         editor.putInt(SD, restoreSavedDays);
@@ -235,5 +224,4 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
     }
-
 }

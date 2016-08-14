@@ -21,18 +21,38 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
-            android:id="@+id/saved_number"
-            android:hint="saved"
-            />
+            android:hint="Saved Days:"
+            android:layout_marginTop="16dp"
+            android:id="@+id/wasted_hint"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/wasted_hint"
+            android:layout_marginTop="16dp"
+            android:hint="Wasted Days:"></TextView>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
+            android:layout_marginTop="16dp"
+            android:id="@+id/saved_number"
+            android:hint="0"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/saved_number"
+            android:layout_marginTop="16dp"
             android:id="@+id/wasted_number"
-            android:hint="wasted"
+            android:hint="0"
             />
 
         <TextView
