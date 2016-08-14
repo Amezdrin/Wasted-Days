@@ -185,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /** TODO - handler for back button; - button to reset values; - statistic */
-    
+
     public void saveWastedDays() {
 
         SharedPreferences.Editor editor = getSharedPreferences("sharedPref", MODE_PRIVATE).edit();
@@ -223,5 +223,10 @@ public class MainActivity extends AppCompatActivity {
                 saveSaveDays();
                 break;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
     }
 }
