@@ -20,14 +20,19 @@ public class MainActivity extends AppCompatActivity {
 
     Boolean dayIsSaved = false;
     Boolean dayIsWasted = false;
+    Boolean dayWasSaved = false;
+    Boolean dayWasWasted = false;
     Calendar calendar2 = Calendar.getInstance();
-    Date today;
-    Date tomorrow;
+    Date todayDate;
+    Date tomorrowDate;
+    Date yesterdayDate;
     int wastedDays = 0;
     int savedDays = 0;
     int restoreWastedDays = 0;
     int restoreSavedDays = 0;
     int i = 0;
+    long todayDay = 0;
+    long yesterdayDay = 0;
     MyTask mt;
     SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
     String out1;
@@ -38,6 +43,10 @@ public class MainActivity extends AppCompatActivity {
     String TAG2 = "current i value";
     public static final String WD = "WastedDAYS";
     public static final String SD = "SavedDAYS";
+    public static final String YTD = "YesterdayDay";
+    public static final String wasWD = "wasWasted";
+    public static final String wasSD = "wasSaved";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,22 +71,26 @@ public class MainActivity extends AppCompatActivity {
         }
         numberOfWastedDays.setText(Integer.toString(wastedDays));
         numberOfSavedDays.setText(Integer.toString(savedDays));
-    }
 
-    public void DaysCounter(){ //счётчик дней для wasted и saved
-        TextView numberOfWastedDays = (TextView) findViewById(R.id.wasted_number);
-        TextView numberOfSavedDays = (TextView) findViewById(R.id.saved_number);
-
-        if(dayIsWasted == true) {
-            wastedDays = wastedDays + 1;
-            restoreWastedDays = wastedDays;
-            numberOfWastedDays.setText(Integer.toString(wastedDays));
+        long restoredYTDValue = prefs.getLong(YTD, yesterdayDay);
+        boolean restoredWasWastedValue = prefs.getBoolean(wasWD, dayWasWasted);
+        boolean restoredWasSavedValue = prefs.getBoolean(wasSD, dayWasSaved);
+        getTodayDay();
+        if (restoredYTDValue < todayDay){
+            if(restoredWasWastedValue == true){
+                dayIsWasted = true;
+                commonUIChanger();
+            }
+            if(restoredWasSavedValue == true){
+                dayIsSaved = true;
+                commonUIChanger();
+            }
+            if(restoredWasSavedValue == false || restoredWasWastedValue == false){
+                dayIsSaved = false; dayIsWasted = false; resetUIToDefault();
+            }
         }
-
-        if(dayIsSaved == true) {
-            savedDays = savedDays + 1;
-            restoreSavedDays = savedDays;
-            numberOfSavedDays.setText(Integer.toString(savedDays));
+        else{
+            resetUIToDefault();
         }
     }
 
@@ -113,9 +126,24 @@ public class MainActivity extends AppCompatActivity {
         saved.setEnabled(true);
 
     }
+    public void DaysCounter(){ //счётчик дней для wasted и saved
+        TextView numberOfWastedDays = (TextView) findViewById(R.id.wasted_number);
+        TextView numberOfSavedDays = (TextView) findViewById(R.id.saved_number);
+
+        if(dayIsWasted == true) {
+            wastedDays = wastedDays + 1;
+            restoreWastedDays = wastedDays;
+            numberOfWastedDays.setText(Integer.toString(wastedDays));
+        }
+
+        if(dayIsSaved == true) {
+            savedDays = savedDays + 1;
+            restoreSavedDays = savedDays;
+            numberOfSavedDays.setText(Integer.toString(savedDays));
+        }
+    }
 
     public void todayTimeStamp(){ //ставит сегодняшнюю дату
-
         TextView timeStamp = (TextView) findViewById(R.id.currentDate_txtView);
         long date = System.currentTimeMillis();
         String dateString = sdf.format(date);
@@ -123,28 +151,34 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getTodayDay(){  //получает сегодняшнюю дату и время из календаря
-
         Calendar calendar = Calendar.getInstance();
-        today = calendar.getTime();
-        Log.w(TAG,sdf.format(today));
+        todayDate = calendar.getTime();
+        Log.w(TAG,sdf.format(todayDate));
+        todayDay = todayDate.getTime();
+    }
+
+    public void makeYesterdayFromToday(){
+        yesterdayDay = todayDate.getTime();
+
+        SharedPreferences.Editor editor = getSharedPreferences("sharedPref", MODE_PRIVATE).edit();
+        editor.putLong(YTD, yesterdayDay);
+        editor.commit();
     }
 
     public void getTomorrowDay(){ //получает завтрашнюю дату с временем 00:00:00
-
         calendar2.set(Calendar.HOUR_OF_DAY, 0);
         calendar2.set(Calendar.MINUTE, 0);
         calendar2.set(Calendar.SECOND, 0);
         calendar2.set(Calendar.MILLISECOND, 0);
         calendar2.add(Calendar.DAY_OF_YEAR, 1);
-        tomorrow = calendar2.getTime();
-        Log.w(TAG1,sdf.format(tomorrow));
+        tomorrowDate = calendar2.getTime();
+        Log.w(TAG1,sdf.format(tomorrowDate));
     }
 
     public int compareDates(){ //сравнивает даты
-
-        i = tomorrow.compareTo(today);
-        out1 = today.toString();
-        out2 = tomorrow.toString();
+        i = tomorrowDate.compareTo(todayDate);
+        out1 = todayDate.toString();
+        out2 = tomorrowDate.toString();
         out1i = ("" + i);
         Log.w(TAG,out1);
         Log.w(TAG1, out2);
@@ -202,9 +236,16 @@ public class MainActivity extends AppCompatActivity {
 
     public void onClickListener(View view) {
 
+        SharedPreferences.Editor editor = getSharedPreferences("sharedPref", MODE_PRIVATE).edit();
+
         switch (view.getId()) {
             case R.id.wasted_btn:
                 dayIsWasted = true;
+                dayWasWasted = true;
+
+                editor.putBoolean(wasWD,dayWasWasted);
+                editor.commit();
+
                 DaysCounter();
                 todayTimeStamp();
                 commonUIChanger();
@@ -215,6 +256,11 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.saved_btn:
                 dayIsSaved = true;
+                dayWasSaved = true;
+
+                editor.putBoolean(wasSD,dayWasSaved);
+                editor.commit();
+
                 DaysCounter();
                 todayTimeStamp();
                 commonUIChanger();
