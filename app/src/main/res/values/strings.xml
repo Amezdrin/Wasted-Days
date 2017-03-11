@@ -1,5 +1,17 @@
 <resources>
     <string name="app_name">Wasted Days</string>
+    <string name="day_saved_title">Saved</string>
+    <string name="day_wasted_title">Wasted</string>
+    <string name="main_question">Has your day been waisted?</string>
+
+    <string name="hint_yes_button">Yes</string>
+    <string name="hint_no_button">No</string>
+    <string name="hint_wasted">WASTED</string>
+    <string name="hint_saved">SAVED</string>
+    
+    <string name="tip_wasted">Work harder next time!</string>
+    <string name="tip_saved">You are the hero of the day!</string>
+
     <color name="white">#FFFFFF</color>
     <color name="wasted_color">#B0171F</color>
     <color name="saved_color">#47A438</color>
