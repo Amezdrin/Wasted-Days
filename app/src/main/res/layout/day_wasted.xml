@@ -30,4 +30,14 @@
         android:layout_centerInParent="true"
         android:layout_below="@id/id_hint_wasted"
         />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="@string/title_stats"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
+        android:textStyle="bold"
+        android:onClick="statsButtonClickedFromWasted"/>
+
 </RelativeLayout>

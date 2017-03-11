@@ -13,6 +13,7 @@ public class MainActivity extends AppCompatActivity {
 
     Intent no_clicked;
     Intent yes_clicked;
+    Intent stats_clicked;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,5 +30,10 @@ public class MainActivity extends AppCompatActivity {
     public void noButtonClicked(View view) {
         no_clicked = new Intent(MainActivity.this, DayWasted.class);
         startActivity(no_clicked);
+    }
+
+    public void statsButtonClicked(View view) {
+        stats_clicked = new Intent(MainActivity.this, StatsScreen.class);
+        startActivity(stats_clicked);
     }
 }

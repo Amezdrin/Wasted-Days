@@ -5,12 +5,12 @@
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label="@string/screen_title_homepage"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
         <activity android:name=".MainActivity"
-            android:label="@string/app_name">
+            android:label="@string/screen_title_homepage">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -19,11 +19,15 @@
         </activity>
 
         <activity android:name=".DaySaved"
-            android:label="@string/day_saved_title">
+            android:label="@string/screen_title_day_saved">
         </activity>
 
         <activity android:name=".DayWasted"
-            android:label="@string/day_wasted_title">
+            android:label="@string/screen_title_day_wasted">
+        </activity>
+
+        <activity android:name=".StatsScreen"
+            android:label="@string/screen_title_stats">
         </activity>
 
     </application>

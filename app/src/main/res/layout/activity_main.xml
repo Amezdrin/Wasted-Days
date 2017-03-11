@@ -56,6 +56,15 @@
             android:layout_toRightOf="@+id/cheat_delimiter"
             android:onClick="noButtonClicked" />
 
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:text="@string/title_stats"
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
+            android:textStyle="bold"
+            android:onClick="statsButtonClicked"/>
+
     </RelativeLayout>
 
 </LinearLayout>
